@@ -53,7 +53,7 @@
         = @stream.title
     .content
 
-  = render 'shared/right_sections'
+  = render 'shared/right_sections', :selected_aspect_names=>@seleted_aspect_names
 
   %a{:id=>"back-to-top", :title=>"#{t('layouts.application.back_to_top')}", :href=>"#"}
     &#8679;

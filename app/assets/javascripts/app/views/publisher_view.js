@@ -24,6 +24,7 @@ app.views.Publisher = Backbone.View.extend({
     "textchange #status_message_fake_text": "handleTextchange",
     "click #locator" : "showLocation",
     "click #poll_creator" : "togglePollCreator",
+    "click #link_creator" : "toggleLinkCreator",
     "click #hide_location" : "destroyLocation",
     "keypress #location_address" : "avoidEnter"
   },
@@ -123,6 +124,12 @@ app.views.Publisher = Backbone.View.extend({
     this.view_poll_creator.on('change', this.checkSubmitAvailability, this);
     this.view_poll_creator.render();
 
+    this.view_link_creator = new app.views.PublisherLinkCreator({
+      el: this.$('#publisher-link-creator')
+    });
+    this.view_poll_creator.on('change', this.checkSubmitAvailability, this);
+    this.view_link_creator.render();
+
   },
 
   // set the selected aspects in the dropdown by their ids
@@ -162,6 +169,10 @@ app.views.Publisher = Backbone.View.extend({
     var statusMessage = new app.models.Post();
     if( app.publisher ) app.publisher.trigger('publisher:add');
 
+    var temp=$("input[name='aspect_ids[]']")
+    for(i=0;i<temp.length;i++)
+      $("#selected_aspects_links"+temp[i].value).append("<li><a href=" +serializedForm["link"]+">"+serializedForm["link"]+"</a></li>");
+  
     statusMessage.save({
       "status_message" : {
         "text" : serializedForm["status_message[text]"]
@@ -172,13 +183,15 @@ app.views.Publisher = Backbone.View.extend({
       "location_address" : $("#location_address").val(),
       "location_coords" : serializedForm["location[coords]"],
       "poll_question" : serializedForm["poll_question"],
-      "poll_answers" : serializedForm["poll_answers[]"]
+      "poll_answers" : serializedForm["poll_answers[]"],
+      "link": serializedForm["link"]
     }, {
       url : "/status_messages",
       success : function() {
         if( app.publisher ) {
           app.publisher.$el.trigger('ajax:success');
           app.publisher.trigger('publisher:sync');
+          $('#link_input').val('');
         }
 
         if(app.stream) app.stream.addNow(statusMessage.toJSON());
@@ -219,6 +232,11 @@ app.views.Publisher = Backbone.View.extend({
 
   togglePollCreator: function(){
     this.view_poll_creator.$el.toggle();
+    this.el_input.focus();
+  },
+
+  toggleLinkCreator: function(){
+    this.view_link_creator.$el.toggle();
     this.el_input.focus();
   },
 

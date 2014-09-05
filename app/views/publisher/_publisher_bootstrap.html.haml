@@ -22,6 +22,8 @@
             %ul#photodropzone
           .row-fluid#location_container
             = hidden_field :location, :coords
+          .row-fluid#publisher-link-creator
+             %input{:id => 'link', :placeholder => t('shared.publisher.add_a_link'), :name => 'link_creator', :class=> "form-control"}
           .row-fluid#poll_creator_wrapper
             #poll_question_wrapper{:class => "input-block-level"}
               %input{:id => 'poll_question', :placeholder => t('shared.publisher.poll.question'), :name => 'poll_question', :class=> "form-control"}
@@ -36,6 +38,8 @@
             #publisher-images.pull-right
               #poll_creator.btn.btn-link{:title => t('shared.publisher.poll.add_a_poll')}
                 %i.entypo.bar-graph
+              #link_creator.btn.btn-link{:title => t('shared.publisher.add_a_link')}
+                %i.entypo.publisher_image
               #file-upload.btn.btn-link{:title => t('shared.publisher.upload_photos')}
                 %i.entypo.camera.publisher_image
               #locator.btn.btn-link{:title => t('shared.publisher.get_location')}
