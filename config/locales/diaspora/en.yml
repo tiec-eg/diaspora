@@ -226,6 +226,7 @@ en:
       acquaintances: "Acquaintances"
       friends: "Friends"
     index:
+      links: "Links"
       donate: "Donate"
       keep_pod_running: "Keep %{pod} running fast and buy servers their coffee fix with a monthly donation!"
       keep_diaspora_running: "Keep diaspora* development fast with a monthly donation!"
@@ -1052,6 +1053,7 @@ en:
       post_a_message_to: "Post a message to %{aspect}"
       make_public: "make public"
       all: "all"
+      add_a_link: "Add a Link"
       upload_photos: "Upload photos"
       get_location: "Get your location"
       remove_location: "Remove location"

@@ -55,8 +55,27 @@ class StatusMessagesController < ApplicationController
     params[:status_message][:aspect_ids] = [*params[:aspect_ids]]
     normalize_public_flag!
     services = [*params[:services]].compact
+    aspect_ids=[*params[:aspect_ids]]
+    
+  
 
     @status_message = current_user.build_post(:status_message, params[:status_message])
+     
+   
+   for aspect_id in aspect_ids do
+
+      aspect_name = Aspect.where("id=?",aspect_id).pluck(:name).first()
+
+      all_aspects_same_name=Aspect.where("name=?",aspect_name).pluck(:id)
+
+      for similar_aspect in all_aspects_same_name do
+        aspect_link = AspectLink.new(:aspect_id=>similar_aspect,:link=>params[:link])
+        aspect_link.save
+      end
+
+   end
+
+    
     @status_message.build_location(:address => params[:location_address], :coordinates => params[:location_coords]) if params[:location_address].present?
     if params[:poll_question].present?
       @status_message.build_poll(:question => params[:poll_question])

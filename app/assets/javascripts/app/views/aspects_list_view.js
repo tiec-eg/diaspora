@@ -10,6 +10,8 @@ app.views.AspectsList = app.views.Base.extend({
   initialize: function() {
     this.collection.on('change', this.toggleSelector, this);
     this.collection.on('change', this.updateStreamTitle, this);
+    this.collection.deselectAll();
+    this.toggleAllHelper();
   },
 
   postRenderTemplate: function() {
@@ -25,22 +27,55 @@ app.views.AspectsList = app.views.Base.extend({
     }).render().el);
   },
 
+  toggleAllHelper: function()
+  {
+    var aspects = this.$('li:not(:last)')
+    if (this.collection.allSelected()) {
+      this.collection.deselectAll();
+      
+      for(i=0;i<this.collection.size();i++)
+        $("#selected_aspects_links"+this.collection.at(i).id).toggle(false);
+      
+      aspects.each(function(i){
+        $(this).find('.icons-check_yes_ok').removeClass('selected');
+      });
+    } else {
+      this.collection.selectAll();
+      
+      for(i=0;i<this.collection.size();i++)
+        $("#selected_aspects_links"+this.collection.at(i).id).toggle(true);
+
+      aspects.each(function(i){
+        $(this).find('.icons-check_yes_ok').addClass('selected');
+      });
+    }
+    this.toggleSelector();
+    app.router.aspects_stream();
+  },
+
   toggleAll: function(evt) {
     if (evt) { evt.preventDefault(); };
 
     var aspects = this.$('li:not(:last)')
     if (this.collection.allSelected()) {
       this.collection.deselectAll();
+      
+      for(i=0;i<this.collection.size();i++)
+        $("#selected_aspects_links"+this.collection.at(i).id).toggle(false);
+      
       aspects.each(function(i){
         $(this).find('.icons-check_yes_ok').removeClass('selected');
       });
     } else {
       this.collection.selectAll();
+      
+      for(i=0;i<this.collection.size();i++)
+        $("#selected_aspects_links"+this.collection.at(i).id).toggle(true);
+
       aspects.each(function(i){
         $(this).find('.icons-check_yes_ok').addClass('selected');
       });
     }
-
     this.toggleSelector();
     app.router.aspects_stream();
   },

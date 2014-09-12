@@ -6,14 +6,33 @@ class StreamsController < ApplicationController
   before_filter :authenticate_user!
   before_filter :save_selected_aspects, :only => :aspects
   before_filter :redirect_unless_admin, :only => :public
+  before_filter :view_links, :only => [:aspects,:activity,:multi,:followed_tags]
 
   respond_to :html,
              :mobile,
              :json
+  
+  def view_links
+    all_user_aspects=Aspect.where("user_id = ?", @current_user.id)
+    @all_user_aspects=all_user_aspects.pluck(:id)
+    @selected_aspect_names=all_user_aspects.pluck(:name)
+    @aspect_ids = (session[:a_ids] || [])
+    @links={}
+    if(@all_user_aspects!=nil)
+      for i in 0..@all_user_aspects.count()
+        aspect_id=@all_user_aspects[i]
+        similar_aspects=Aspect.where("name=?",@selected_aspect_names[i]).pluck(:id)
+        @links[aspect_id]=[]
+        for j in 0..similar_aspects.count()
+          @links[aspect_id]+=AspectLink.where("aspect_id = ?", similar_aspects[j]).pluck(:link)
+        end
+          @links[aspect_id]=@links[aspect_id].uniq()
+      end
+    end
+  end
 
   def aspects
-    aspect_ids = (session[:a_ids] || [])
-    @stream = Stream::Aspect.new(current_user, aspect_ids,
+    @stream = Stream::Aspect.new(current_user, @aspect_ids,
                                  :max_time => max_time)
     stream_responder
   end
@@ -27,7 +46,7 @@ class StreamsController < ApplicationController
   end
 
   def multi
-      stream_responder(Stream::Multi)
+    stream_responder(Stream::Multi)
   end
 
   def commented
